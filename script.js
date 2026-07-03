@@ -1,3 +1,8 @@
+const beep = new Audio("sounds/beep-02.mp3");
+beep.preload = "auto";
+
+
+
 const API_URL = "https://script.google.com/macros/s/AKfycbxGOpMUdZMdSh9B_8ZA3eUv8ERMca4y3uY60nb_cN8m_185DLKfT4pgN_K95-nRZfj8/exec";
 
 let scanner;

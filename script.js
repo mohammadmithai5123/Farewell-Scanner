@@ -56,29 +56,48 @@ function startScanner() {
 
     Html5Qrcode.getCameras().then(devices => {
 
-        if (devices.length) {
+        console.log('Cameras found:', devices);
 
-            scanner.start(
+        if (devices && devices.length) {
+            // Prefer a device ID (more reliable than constraints object)
+            const cameraId = devices[0].id || devices[0].deviceId || devices[0].label;
 
-                { facingMode: "environment" },
+            // Safety: if cameraId is missing, fallback to facingMode constraint
+            const cameraArg = cameraId ? cameraId : { facingMode: "environment" };
 
-                {
-                    fps: 10,
-                    qrbox: {
-                        width: 250,
-                        height: 250
+            try {
+                scanner.start(
+                    cameraArg,
+                    {
+                        fps: 10,
+                        qrbox: {
+                            width: 250,
+                            height: 250
+                        }
+                    },
+                    onScanSuccess,
+                    (errorMessage) => {
+                        // QR Code scan failure callback (called for each scan attempt that fails)
+                        // We log it for debugging but don't interrupt the scanner
+                        // console.debug('QR Scan error:', errorMessage);
                     }
-                },
+                ).catch(err => {
+                    console.error('Scanner start failed:', err);
+                    alert('Could not start camera: ' + err);
+                });
+            } catch (e) {
+                console.error('Error calling scanner.start:', e);
+                alert('Scanner initialization error: ' + e);
+            }
 
-                onScanSuccess
-
-            );
-
+        } else {
+            alert('No cameras found');
         }
 
     }).catch(err => {
 
-        alert(err);
+        console.error('getCameras() error:', err);
+        alert('Camera access error: ' + err);
 
     });
 
@@ -86,9 +105,13 @@ function startScanner() {
 
 async function onScanSuccess(decodedText) {
 
-    await scanner.stop();
+    try {
+        await scanner.stop();
+    } catch (e) {
+        console.warn('Error stopping scanner after success:', e);
+    }
 
-    console.log(decodedText);
+    console.log('QR decoded:', decodedText);
 
     // QR contains:
     // PASS:FW-XXXX|REG:...|NAME:...
@@ -120,6 +143,8 @@ function verifyPass(passNo) {
     })
 
     .catch(err => {
+
+        console.error('verifyPass error:', err);
 
         alert(err);
 

@@ -1,7 +1,45 @@
 const beep = new Audio("sounds/beep-02.mp3");
 beep.preload = "auto";
 
+// Ensure the browser allows audio playback by unlocking audio on first user gesture.
+// Many browsers block autoplay with sound until the user interacts with the page.
+let audioUnlocked = false;
 
+function unlockAudio() {
+    if (audioUnlocked) return;
+
+    // Try a quick play/pause to grant permission for future plays
+    beep.play().then(() => {
+        beep.pause();
+        beep.currentTime = 0;
+        audioUnlocked = true;
+        console.log('Audio unlocked');
+    }).catch(err => {
+        // NotAllowedError will be thrown if the browser still blocks it.
+        console.warn('Audio unlock failed:', err);
+    });
+
+    // Also attempt to resume an AudioContext if present (some browsers gate audio via AudioContext)
+    try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (AudioCtx) {
+            const ctx = new AudioCtx();
+            if (ctx.state === 'suspended') {
+                ctx.resume().then(() => console.log('AudioContext resumed')).catch(() => {});
+            }
+        }
+    } catch (e) {
+        // ignore
+    }
+
+    // Remove listeners after first interaction
+    document.removeEventListener('click', unlockAudio);
+    document.removeEventListener('touchstart', unlockAudio);
+}
+
+// Attach listeners so a single user tap/click unlocks audio for the session
+document.addEventListener('click', unlockAudio);
+document.addEventListener('touchstart', unlockAudio);
 
 const API_URL = "https://script.google.com/macros/s/AKfycbxGOpMUdZMdSh9B_8ZA3eUv8ERMca4y3uY60nb_cN8m_185DLKfT4pgN_K95-nRZfj8/exec";
 
@@ -93,8 +131,13 @@ function verifyPass(passNo) {
 
 function showResult(data){
 
-    beep.currentTime = 0;
-beep.play().catch(err => console.log("Audio Error:", err));
+    // reset to start so the beep plays from the beginning
+    try {
+        beep.currentTime = 0;
+        beep.play().catch(err => console.log("Audio Error:", err));
+    } catch (e) {
+        console.log('Audio play/reset error:', e);
+    }
 
     const status=document.getElementById("status");
 

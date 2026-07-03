@@ -93,6 +93,9 @@ function verifyPass(passNo) {
 
 function showResult(data){
 
+    beep.currentTime = 0;
+beep.play().catch(err => console.log("Audio Error:", err));
+
     const status=document.getElementById("status");
 
     const details=document.getElementById("details");

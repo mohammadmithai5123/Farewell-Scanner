@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Farewell QR Scanner</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <script src="https://unpkg.com/html5-qrcode"></script>
+
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>Farewell Entry Scanner</h1>
+
+        <div id="reader"></div>
+
+        <div id="status" class="waiting">
+
+            Waiting for QR Scan...
+
+        </div>
+
+        <div id="details">
+
+            <h2 id="studentName"></h2>
+
+            <p><strong>Registration:</strong> <span id="studentReg"></span></p>
+
+            <p><strong>Section:</strong> <span id="studentSection"></span></p>
+
+            <p><strong>Message:</strong> <span id="studentMessage"></span></p>
+
+        </div>
+
+        <button id="restartBtn" onclick="startScanner()" style="display:none;">
+            Scan Next Student
+        </button>
+
+    </div>
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>

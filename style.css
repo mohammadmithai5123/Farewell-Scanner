@@ -117,6 +117,32 @@ h1{
 
 }
 
+.success{
+    background:#1e7e34;
+    color:#fff;
+}
+
+.duplicate{
+    background:#c82333;
+    color:#fff;
+}
+
+.payment{
+    background:#fd7e14;
+    color:#fff;
+}
+
+.invalid{
+    background:#343a40;
+    color:#fff;
+}
+
+.waiting{
+    background:#007bff;
+    color:#fff;
+}
+
+
 #restartBtn{
 
     width:100%;
